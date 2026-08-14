@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>人狼メモアプリ - ゲーム画面</title>
+<style>
+    body {
+        font-family: sans-serif;
+        margin: 0;
+        background: #eef6ff; /* ほぼ白に近い淡い青 */
+    }
+
+    header {
+        background: #4a90e2;
+        color: white;
+        padding: 15px;
+        font-size: 20px;
+    }
+
+    /* パネル（ドラッグ可能） */
+    .panel {
+        background: white;
+        padding: 15px;
+        margin: 15px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .panel-header {
+        font-weight: bold;
+        margin-bottom: 10px;
+        cursor: move;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .handle {
+        cursor: grab;
+        font-size: 20px;
+        user-select: none;
+    }
+
+    /* プレイヤー一覧（縦2列） */
+    .player-grid {
+    display: grid;
+        grid-template-columns: 220px 220px; /* ← ここだけ修正 */
+        gap: 5px 10px;                      /* ← 間の余白も少し狭く */
+    }
+
+    .player-box {
+        background: #fff;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        width: 200px;
+    }
+
+    .player-box input {
+        width: 120px;
+    }
+
+    .memo-area {
+        margin-top: 8px;
+    }
+
+    .memo-area textarea {
+        width: 100%;
+        height: 60px;
+    }
+    .player-box button {
+    border-radius: 8px;
+    padding: 3px 7px; /* ← 高さアップ */
+    font-size: 14px;   /* ← 入力欄とバランスを合わせる */
+    cursor: pointer;
+}
+
+
+    .add-btn {
+        padding: 6px 12px;
+        background: #4a90e2;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+
+    .add-btn:hover {
+        background: #357ac9;
+    }
+
+    .role-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* 左端のプレイヤー名 select を固定 */
+    .role-row select:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 50;
+        background: white;
+        box-shadow: 3px 0 6px rgba(0,0,0,0.15);
+    }
+
+    .day-block {
+        display: flex;
+        flex-direction: column;
+        margin-right: 15px;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    select {
+        width: 120px;
+        padding: 5px;
+        font-size: 12px;
+        background: #fff;
+        border-radius: 6px;
+        border: 2px solid #ccc;
+        cursor: pointer;
+    }
+
+    select option {
+        white-space: normal;
+    }
+.day-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 6px;
+}
+
+.day-label {
+    width: 60px;
+    font-weight: bold;
+}
+
+.day-header-cell {
+    width: 100px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.day-row select {
+    width: 100px;
+}
+
+.result-black {
+    background: #000;
+    color: #fff;
+}
+
+.player-box input {
+    width: 200px;
+    height: 40px;
+    font-size: 16px;
+    padding: 6px 10px;
+    box-sizing: border-box;
+    border-radius: 10px;  /* ← 柔らかめの角丸 */
+}
+
+.vote-self {
+    margin-bottom: 6px;
+}
+
+.vote-self-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.vote-self-tab {
+    flex: 1;
+    padding: 4px 0;
+    font-size: 12px;
+    border-radius: 6px;
+    background: #eef6ff;
+    border: 1px solid #bcd3f0;
+    cursor: pointer;
+}
+
+.vote-self-tab.active {
+    background: #ffffff;
+    border: 1px solid #4a90e2;
+    font-weight: bold;
+}
+
+.vote-self-window {
+    background: #fff;
+    border-radius: 6px;
+    padding: 6px;
+    border: 1px solid #d0d8e4;
+    font-size: 12px;
+}
+
+.vote-self-select {
+    padding: 3px 6px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.top-bar {
+    background: #4a90e2;
+    color: white;
+    padding: 10px 15px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.top-title {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.top-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.top-btn {
+    background: rgba(255,255,255,0.45); /* ← 透明度を少し濃くする */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15); /* ← 浮き感を追加 */
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.top-btn:hover {
+    background: rgba(255,255,255,0.35);
+}
+
+
+.delete-btn {
+    background: #e74c3c;   /* 赤 */
+    color: white;          /* 白文字 */
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.delete-btn:hover {
+    background: #c0392b;   /* 少し濃い赤 */
+}
+
+/* ▼ panel-content はスクロールさせない */
+.panel-content {
+    overflow: hidden;
+    transition: all 0.15s ease;
+}
+
+/* ▼ deadArea / attackArea が横スクロールを担当する */
+#deadArea,
+#attackArea {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+/* ▼ day-row は縦に積む（ヘッダー行＋選択行） */
+#deadArea .day-row,
+#attackArea .day-row {
+    display: flex;
+    flex-direction: row; /* 横並びのままでOK */
+    gap: 10px;
+    padding-bottom: 6px;
+}
+
+/* ▼ ラベル（吊り / 襲撃）は固定 */
+#deadArea .day-label,
+#attackArea .day-label {
+    flex-shrink: 0;
+    width: 60px;
+    font-weight: bold;
+}
+
+/* ▼ 日付ヘッダーセル */
+#deadArea .day-header-cell,
+#attackArea .day-header-cell {
+    flex-shrink: 0;
+    width: 100px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* ▼ 各日の select */
+#deadArea select,
+#attackArea select {
+    flex-shrink: 0;
+    width: 100px;
+}
+
+/* ▼ プレイヤー追加（青） */
+.player-add-btn {
+    padding: 6px 12px;
+    background: #4a90e2; /* 青 */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+.player-add-btn:hover {
+    background: #357ac9;
+}
+
+/* ▼ プレイヤー削除（赤） */
+.player-remove-btn {
+    padding: 6px 12px;
+    background: #e74c3c; /* 赤 */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+.player-remove-btn:hover {
+    background: #c0392b;
+}
+
+
+
+/* ▼ 新規村作成（オレンジ） */
+.new-village-btn {
+    background: #f39c12; /* 明るいオレンジ */
+    color: white;
+}
+.new-village-btn:hover {
+    background: #d68910; /* 少し濃いオレンジ */
+}
+
+/* ▼ 次の村へ進む（緑） */
+.next-village-btn {
+    background: #2ecc71;
+    color: white;
+}
+.next-village-btn:hover {
+    background: #27ae60;
+}
+
+//タイトルへ戻る
+.top-btn {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+
+
+
+//スマホ対応
+@media (max-width: 600px) {
+    body {
+        transform: scale(0.85);
+        transform-origin: top center;
+    }
+}
+
+
+
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+<button class="top-btn" onclick="goToTitle()">タイトルへ戻る</button>
+    <div class="top-title"></div>
+
+   <div class="top-buttons">
+
+
+
+
+<button class="top-btn new-village-btn"
+    onclick="newVillage()"
+    title="すべてを初期状態に戻します">
+    新規村作成
+</button>
+
+<button class="top-btn next-village-btn"
+    onclick="nextVillage()"
+    title="プレイヤーはそのままで次のゲームへ進む">
+    次の村へ進む
+</button>
+
+
+</div>
+
+</header>
+
+
+
+<div id="panelContainer">
+
+    <!-- プレイヤー一覧 -->
+<div class="panel" draggable="true">
+    <div class="panel-header" onclick="togglePanel(this)">
+        <span class="handle">≡</span>プレイヤー一覧
+    </div>
+
+    <div class="panel-content">
+        <button class="player-add-btn" onclick="addPlayer()">プレイヤー追加</button>
+        <button class="player-remove-btn" onclick="removePlayer()">プレイヤー削除</button>
+
+
+        <div class="player-grid" id="playerGrid"></div>
+    </div>
+</div>
+
+
+    <!-- 占い師 -->
+<div class="panel" draggable="true">
+    <div class="panel-header" onclick="togglePanel(this)">
+        <span class="handle">≡</span>占い師結果
+    </div>
+
+    <div class="panel-content">
+        <button class="add-btn" onclick="addRole('uranai')">＋ 占い師を追加</button>
+        <button class="delete-btn" onclick="removeUranai()">削除</button>
+
+        <div id="uranaiArea"></div>
+    </div>
+</div>
+
+
+    <!-- 霊能者 -->
+<div class="panel" draggable="true">
+    <div class="panel-header" onclick="togglePanel(this)">
+        <span class="handle">≡</span>霊能結果
+    </div>
+
+    <div class="panel-content">
+        <button class="add-btn" onclick="addRole('reino')">＋ 霊能者を追加</button>
+        <button class="delete-btn" onclick="removeReino()">削除</button>
+
+        <div id="reinoArea"></div>
+    </div>
+</div>
+
+
+    <!-- 騎士 -->
+<div class="panel" draggable="true">
+    <div class="panel-header" onclick="togglePanel(this)">
+        <span class="handle">≡</span>騎士結果
+    </div>
+
+    <div class="panel-content">
+        <button class="add-btn" onclick="addRole('knight')">＋ 騎士を追加</button>
+        <button class="delete-btn" onclick="removeKnight()">削除</button>
+
+        <div id="knightArea"></div>
+    </div>
+</div>
+
+
+    <!-- 処刑者 -->
+<div class="panel" draggable="true">
+    <div class="panel-header" onclick="togglePanel(this)">
+        <span class="handle">≡</span>処刑者
+    </div>
+
+    <div class="panel-content" style="display:none;">
+        <div id="deadArea"></div>
+    </div>
+</div>
+
+
+
+    <!-- 襲撃者 -->
+<div class="panel" draggable="true">
+    <div class="panel-header" onclick="togglePanel(this)">
+        <span class="handle">≡</span>襲撃者
+    </div>
+
+    <div class="panel-content" style="display:none;">
+        <div id="attackArea"></div>
+    </div>
+</div>
+
+
+
+
+</div>
+
+<script>
+/* -------------------------
+   プレイヤー一覧（縦2列）
+------------------------- */
+
+
+//保存処理（ここから）
+
+function saveState() {
+    const state = {
+        players: players,
+        uranai: document.getElementById("uranaiArea").innerHTML,
+        reino: document.getElementById("reinoArea").innerHTML,
+        knight: document.getElementById("knightArea").innerHTML,
+        dead: document.getElementById("deadArea").innerHTML,
+        attack: document.getElementById("attackArea").innerHTML,
+        panelState: getPanelState()
+    };
+
+    localStorage.setItem("jinroState", JSON.stringify(state));
+}
+
+//保存処理（ここまで）
+
+//復元処理（ここから）
+function loadState() {
+    const data = localStorage.getItem("jinroState");
+    if (!data) return; // 保存データなし
+
+    const state = JSON.parse(data);
+
+    // プレイヤー一覧
+    if (state.players) {
+        players = state.players;
+        renderPlayers();
+    }
+
+    // 占い師・霊能・騎士・吊り・襲撃の HTML を復元
+    if (state.uranai) document.getElementById("uranaiArea").innerHTML = state.uranai;
+    if (state.reino) document.getElementById("reinoArea").innerHTML = state.reino;
+    if (state.knight) document.getElementById("knightArea").innerHTML = state.knight;
+    if (state.dead) document.getElementById("deadArea").innerHTML = state.dead;
+    if (state.attack) document.getElementById("attackArea").innerHTML = state.attack;
+
+    // パネル開閉状態
+    if (state.panelState) restorePanelState(state.panelState);
+
+    // ★ 復元した select にイベントを付け直す（重要）
+    rebindSelectEvents();
+}
+//復元処理（ここまで）
+
+//復元後に select にイベントを付け直す（必須）（ここから）
+function rebindSelectEvents() {
+    document.querySelectorAll("select").forEach(sel => {
+        sel.addEventListener("change", saveState);
+
+        // 黒のときの色付けも復元
+        if (sel.dataset.type === "result") {
+            if (sel.value === "black") {
+                sel.classList.add("result-black");
+            }
+            sel.addEventListener("change", () => {
+                sel.classList.remove("result-black");
+                if (sel.value === "black") {
+                    sel.classList.add("result-black");
+                }
+            });
+        }
+    });
+}
+//復元後に select にイベントを付け直す（必須）（ここまで）
+
+
+//パネル開閉状態の復元（ここから）
+function restorePanelState(state) {
+    document.querySelectorAll(".panel").forEach((panel, i) => {
+        const content = panel.querySelector(".panel-content");
+        content.style.display = state[i] ? "block" : "none";
+    });
+}
+//パネル開閉状態の復元（ここまで）
+
+
+
+//ページ読み込み時に loadState() を呼ぶ
+window.addEventListener("load", loadState);
+
+
+
+const playerGrid = document.getElementById("playerGrid");
+let players = [];
+
+function renderPlayers() {
+    playerGrid.innerHTML = "";
+
+    players.forEach((name, i) => {
+        const box = document.createElement("div");
+        box.className = "player-box";
+
+        box.innerHTML = `
+            <div>
+                ${i+1}.
+                <input type="text" value="${name}" class="player-input">
+                <button onclick="toggleMemo(this)">＋メモ</button>
+            </div>
+
+            <div class="memo-area" style="display:none;">
+
+    <div class="vote-self">
+        <div class="vote-self-tabs">
+            <button class="vote-self-tab" data-day="1">1</button>
+            <button class="vote-self-tab" data-day="2">2</button>
+            <button class="vote-self-tab" data-day="3">3</button>
+            <button class="vote-self-tab" data-day="4">4</button>
+            <button class="vote-self-tab" data-day="5">5</button>
+            <button class="vote-self-tab" data-day="6">6</button>
+        </div>
+        <div class="vote-self-window" style="display:none;"></div>
+    </div>
+
+    <textarea placeholder="議論メモ"></textarea>
+</div>
+
+        `;
+
+        playerGrid.appendChild(box);
+
+        // 入力欄イベント
+        const input = box.querySelector(".player-input");
+        input.addEventListener("input", () => {
+            updatePlayers();
+            saveState();
+        });
+    });
+
+    // Enterで次の入力欄へ移動
+    const inputs = document.querySelectorAll(".player-input");
+    inputs.forEach((input, index) => {
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                if (inputs[index + 1]) {
+                    inputs[index + 1].focus();
+                }
+            }
+        });
+
+        input.addEventListener("input", updatePlayers);
+    });
+}
+
+
+function toggleMemo(btn) {
+    const memo = btn.parentElement.nextElementSibling;
+    memo.style.display = memo.style.display === "none" ? "block" : "none";
+}
+
+function updatePlayers() {
+    const inputs = document.querySelectorAll(".player-box input");
+    players = [];
+    inputs.forEach((input, index) => {
+        players.push(input.value || `プレイヤー${index + 1}`);
+    });
+    refreshAllSelects();
+}
+
+function addPlayer() {
+    players.push("");  // ★ 名前を空欄で追加する
+    renderPlayers();
+    initVoteSelf();
+    refreshAllSelects();
+    saveState();
+}
+
+
+/* 初期プレイヤー13人（空欄） */
+for (let i = 1; i <= 13; i++) players.push("");
+renderPlayers();
+
+/* -------------------------
+   プルダウン生成
+------------------------- */
+function createPlayerSelect() {
+    const sel = document.createElement("select");
+
+    // ★ デフォルトの「選択」
+    const defaultOp = document.createElement("option");
+    defaultOp.value = "";
+    defaultOp.textContent = "選択";
+    sel.appendChild(defaultOp);
+
+    players.forEach((name) => {
+        if (name.trim() === "") return; // 空欄プレイヤーは追加しない
+        const op = document.createElement("option");
+        op.value = name;
+        op.textContent = name;
+        sel.appendChild(op);
+    });
+
+    return sel;
+}
+
+
+function togglePanel(header) {
+    const content = header.nextElementSibling;
+    content.style.display =
+        content.style.display === "none" ? "block" : "none";
+}
+
+
+
+function createAttackAndDead() {
+    const deadArea = document.getElementById("deadArea");
+    const attackArea = document.getElementById("attackArea");
+    const days = 7;
+
+    /* ===== 吊り ===== */
+
+    // 日付ヘッダー行
+    const deadHeader = document.createElement("div");
+    deadHeader.className = "day-row";
+
+    const deadHeaderEmpty = document.createElement("div");
+    deadHeaderEmpty.className = "day-label";
+    deadHeader.appendChild(deadHeaderEmpty);
+
+    for (let day = 1; day <= days; day++) {
+        const cell = document.createElement("div");
+        cell.className = "day-header-cell";
+        cell.textContent = `${day}日目`;
+        deadHeader.appendChild(cell);
+    }
+
+    // 吊りの選択行
+    const deadRow = document.createElement("div");
+    deadRow.className = "day-row";
+
+    const deadLabel = document.createElement("div");
+    deadLabel.className = "day-label";
+    deadLabel.textContent = "吊り";
+    deadRow.appendChild(deadLabel);
+
+    for (let day = 1; day <= days; day++) {
+        const sel = createPlayerSelect();
+        deadRow.appendChild(sel);
+    }
+
+    deadArea.appendChild(deadHeader);
+    deadArea.appendChild(deadRow);
+
+    /* ===== 襲撃 ===== */
+
+    const attackHeader = document.createElement("div");
+    attackHeader.className = "day-row";
+
+    const attackHeaderEmpty = document.createElement("div");
+    attackHeaderEmpty.className = "day-label";
+    attackHeader.appendChild(attackHeaderEmpty);
+
+    for (let day = 1; day <= days; day++) {
+        const cell = document.createElement("div");
+        cell.className = "day-header-cell";
+        cell.textContent = `${day}日目`;
+        attackHeader.appendChild(cell);
+    }
+
+    const attackRow = document.createElement("div");
+    attackRow.className = "day-row";
+
+    const attackLabel = document.createElement("div");
+    attackLabel.className = "day-label";
+    attackLabel.textContent = "襲撃";
+    attackRow.appendChild(attackLabel);
+
+    for (let day = 1; day <= days; day++) {
+        const sel = createPlayerSelect();
+        attackRow.appendChild(sel);
+    }
+
+    attackArea.appendChild(attackHeader);
+    attackArea.appendChild(attackRow);
+}
+
+/* -------------------------
+   占い師・霊能者・騎士（横1列）
+------------------------- */
+function addRole(type) {
+    const area = document.getElementById(type + "Area");
+    const row = document.createElement("div");
+    row.className = "role-row";
+
+    // 役職者本人
+    const roleSelect = createPlayerSelect();
+    roleSelect.addEventListener("change", saveState); //これが抜けていた！保存処理
+    row.appendChild(roleSelect);
+
+    for (let day = 1; day <= 7; day++) {
+        const block = document.createElement("div");
+        block.className = "day-block";
+
+        // 対象プレイヤー
+        const sel1 = createPlayerSelect();
+	sel1.addEventListener("change", saveState);
+
+        // 結果（ここは createPlayerSelect を使わない）
+        const sel2 = document.createElement("select");
+        sel2.addEventListener("change", saveState);
+	sel2.dataset.type = "result";
+
+       sel2.addEventListener("change", () => {
+       sel2.classList.remove("result-black");
+
+       if (sel2.value === "black") {
+          sel2.classList.add("result-black");
+        }
+        });
+
+
+
+        if (type === "uranai" || type === "reino") {
+            sel2.innerHTML = `
+                <option value="">不明</option>
+                <option value="white">白</option>
+                <option value="black">黒</option>
+            `;
+        } else if (type === "knight") {
+            sel2.innerHTML = `
+                <option value="">不明</option>
+                <option value="success">成功</option>
+                <option value="fail">失敗</option>
+            `;
+        }
+
+        block.appendChild(document.createTextNode(`${day}日目`));
+        block.appendChild(sel1);
+        block.appendChild(sel2);
+
+        row.appendChild(block);
+    }
+
+    area.appendChild(row);
+}
+
+
+/* -------------------------
+   全プルダウン更新
+------------------------- */
+function refreshAllSelects() {
+    document.querySelectorAll("select").forEach(sel => {
+        // ★ 結果セレクトは書き換えない
+        if (sel.dataset.type === "result") return;
+
+        const current = sel.value;
+        sel.innerHTML = "";
+
+        // デフォルト「選択」
+        const defaultOp = document.createElement("option");
+        defaultOp.value = "";
+        defaultOp.textContent = "選択";
+        sel.appendChild(defaultOp);
+
+        players.forEach((name) => {
+            if (name.trim() === "") return;
+            const op = document.createElement("option");
+            op.value = name;
+            op.textContent = name;
+            sel.appendChild(op);
+        });
+
+        sel.value = current;
+    });
+}
+
+/* ============================
+   ▼ プレイヤー個別投票システム（修正版）
+============================ */
+
+/* ============================
+   ▼ プレイヤー個別投票システム（完全修正版）
+============================ */
+
+let playerVotes = {}; // { "いけあ": {1:"",2:"",...}, ... }
+
+/* ▼ プレイヤー名が空欄なら投票データを作らない */
+function initPlayerVotes() {
+    players.forEach(name => {
+        const clean = name.trim();
+        if (!clean) return; // 空欄は無視
+        if (!playerVotes[clean]) {
+            playerVotes[clean] = {1:"",2:"",3:"",4:"",5:"",6:""};
+        }
+    });
+}
+
+function savePlayerVotes() {
+    localStorage.setItem("jinroPlayerVotes", JSON.stringify(playerVotes));
+}
+
+function loadPlayerVotes() {
+    const raw = localStorage.getItem("jinroPlayerVotes");
+    if (!raw) return;
+    playerVotes = JSON.parse(raw);
+}
+
+/* ▼ プレイヤー名をリアルタイムに取得 */
+function getPlayerNameFromBox(box) {
+    const input = box.querySelector(".player-input");
+    const name = input ? input.value.trim() : "";
+    return name;
+}
+
+/* ▼ プレイヤー名が変わったら playerVotes のキーも更新する */
+function syncPlayerVotes() {
+    const newVotes = {};
+    players.forEach(name => {
+        const clean = name.trim();
+        if (!clean) return;
+        newVotes[clean] = playerVotes[clean] || {1:"",2:"",3:"",4:"",5:"",6:""};
+    });
+    playerVotes = newVotes;
+    savePlayerVotes();
+}
+
+/* ▼ 投票ウィンドウの描画 */
+function renderVoteSelf(memoArea, playerName) {
+
+    if (!playerName) {
+        memoArea.querySelector(".vote-self-window").style.display = "none";
+        return;
+    }
+
+    const windowBox = memoArea.querySelector(".vote-self-window");
+    const activeTab = memoArea.querySelector(".vote-self-tab.active");
+    if (!activeTab) return;
+
+    const day = activeTab.dataset.day;
+
+    windowBox.innerHTML = "";
+
+    const sel = document.createElement("select");
+    sel.className = "vote-self-select";
+
+    const optNone = document.createElement("option");
+    optNone.value = "";
+    optNone.textContent = "未投票";
+    sel.appendChild(optNone);
+
+    players.forEach(p => {
+        const clean = p.trim();
+        if (!clean) return;
+        const op = document.createElement("option");
+        op.value = clean;
+        op.textContent = clean;
+        sel.appendChild(op);
+    });
+
+    sel.value = playerVotes[playerName][day] || "";
+
+    sel.addEventListener("change", () => {
+        playerVotes[playerName][day] = sel.value;
+        savePlayerVotes();
+    });
+
+    windowBox.appendChild(sel);
+}
+
+/* ▼ タブの動作（押すと開く／もう一度押すと閉じる） */
+function initVoteSelf() {
+    loadPlayerVotes();
+    initPlayerVotes();
+
+    document.querySelectorAll(".player-box").forEach(box => {
+        const memoArea = box.querySelector(".memo-area");
+
+        const tabs = memoArea.querySelectorAll(".vote-self-tab");
+        const windowBox = memoArea.querySelector(".vote-self-window");
+
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+
+                const playerName = getPlayerNameFromBox(box);
+
+                syncPlayerVotes(); // ★ プレイヤー名変更を反映
+
+                const isOpen = tab.classList.contains("active");
+
+                tabs.forEach(t => t.classList.remove("active"));
+                windowBox.style.display = "none";
+
+                if (!isOpen && playerName) {
+                    tab.classList.add("active");
+                    windowBox.style.display = "block";
+                    renderVoteSelf(memoArea, playerName);
+                }
+            });
+
+            /* ▼ ホバーでポップアップ（空欄なら何も出さない） */
+            tab.addEventListener("mouseenter", () => {
+                const playerName = getPlayerNameFromBox(box);
+                if (!playerName) {
+                    tab.title = "";
+                    return;
+                }
+                const day = tab.dataset.day;
+                const target = playerVotes[playerName][day] || "未投票";
+                tab.title = `${day}日目：${target}`;
+            });
+        });
+    });
+}
+
+window.addEventListener("load", initVoteSelf);
+
+/* ============================
+   ▼ 次の村へ進む（プレイヤー以外を白紙に戻す）
+============================ */
+
+function nextVillage() {
+
+    if (!confirm("プレイヤーはそのままで次のゲームへ進みますか？")) {
+        return;
+    }
+
+    /* ▼ 1. プレイヤー一覧はそのまま残す */
+    // players 配列はそのまま
+
+    /* ▼ 2. メモ欄のテキストを空にする */
+    document.querySelectorAll(".memo-area textarea").forEach(t => {
+        t.value = "";
+    });
+
+    /* ▼ 3. 占い師・霊能・騎士・吊り・襲撃を白紙に戻す */
+    document.getElementById("uranaiArea").innerHTML = "";
+    document.getElementById("reinoArea").innerHTML = "";
+    document.getElementById("knightArea").innerHTML = "";
+    document.getElementById("deadArea").innerHTML = "";
+    document.getElementById("attackArea").innerHTML = "";
+
+    /* ▼ 4. 個別投票データを白紙に戻す */
+    playerVotes = {};
+    players.forEach(name => {
+        const clean = name.trim();
+        if (!clean) return;
+        playerVotes[clean] = {1:"",2:"",3:"",4:"",5:"",6:""};
+    });
+    savePlayerVotes();
+
+    /* ▼ 5. 吊り・襲撃の初期行を再生成 */
+    createAttackAndDead();
+
+    /* ▼ 6. 全セレクトを更新（プレイヤー一覧に合わせて） */
+    refreshAllSelects();
+
+    /* ▼ 7. 投票プルダウンを画面上も「未投票」に戻す */
+    document.querySelectorAll(".vote-self-window .vote-self-select").forEach(sel => {
+        sel.value = "";
+    });
+
+    /* ▼ 8. タブのポップアップもリセット（title を空に） */
+    document.querySelectorAll(".vote-self-tab").forEach(tab => {
+        tab.title = "";
+    });
+
+    /* ▼ 9. 保存 */
+    saveState();
+
+    alert("次の村へ進みました！");
+
+
+
+
+}
+
+
+
+/* -------------------------
+   パネルのドラッグ＆ドロップ
+------------------------- */
+const container = document.getElementById("panelContainer");
+let dragSrcEl = null;
+
+container.addEventListener("dragstart", e => {
+    if (!e.target.classList.contains("panel")) return;
+    dragSrcEl = e.target;
+    e.dataTransfer.effectAllowed = "move";
+});
+
+container.addEventListener("dragover", e => {
+    e.preventDefault();
+});
+
+container.addEventListener("drop", e => {
+    e.preventDefault();
+    const target = e.target.closest(".panel");
+    if (target && target !== dragSrcEl) {
+        container.insertBefore(dragSrcEl, target);
+    }
+});
+
+/* 初期化 */
+createAttackAndDead();
+refreshAllSelects();
+
+/* ============================
+   ▼ プレイヤー削除（最後の1人を削除）
+============================ */
+
+function removePlayer() {
+
+    if (players.length <= 1) {
+        alert("これ以上削除できません（最低1人必要）");
+        return;
+    }
+
+    // 最後のプレイヤーを削除
+    players.pop();
+
+    // プレイヤー一覧を再描画
+    renderPlayers();
+
+    // 投票システムを再初期化
+    initVoteSelf();
+
+    // セレクト欄を更新
+    refreshAllSelects();
+
+    // 保存
+    saveState();
+
+    alert("プレイヤーを1人削除しました");
+}
+
+//占い師削除
+function removeUranai() {
+    const area = document.getElementById("uranaiArea");
+    const rows = area.children;  // ★ 直下の子要素をすべて取得
+
+    if (rows.length <= 1) {
+        alert("これ以上削除できません（最低1つ必要）");
+        return;
+    }
+
+    area.removeChild(rows[rows.length - 1]);  // ★ 最後の行を削除
+    saveState();
+}
+
+
+
+//霊媒師削除
+function removeReino() {
+    const area = document.getElementById("reinoArea");
+    const rows = area.children;
+
+    if (rows.length <= 1) {
+        alert("これ以上削除できません（最低1つ必要）");
+        return;
+    }
+
+    area.removeChild(rows[rows.length - 1]);
+    saveState();
+}
+
+//騎士削除
+function removeKnight() {
+    const area = document.getElementById("knightArea");
+    const rows = area.children;
+
+    if (rows.length <= 1) {
+        alert("これ以上削除できません（最低1つ必要）");
+        return;
+    }
+
+    area.removeChild(rows[rows.length - 1]);
+    saveState();
+}
+
+
+//新規村作成
+function newVillage() {
+    if (!confirm("すべてを初期状態に戻しますか？")) return;
+
+    // 保存データを完全削除
+    localStorage.removeItem("jinroState");
+    localStorage.removeItem("jinroPlayerVotes");
+
+    // ページを再読み込み（初期状態に戻る）
+    location.reload();
+}
+
+//タイトルへ戻る
+function goToTitle() {
+    location.href = "start.html";
+}
+
+
+
+</script>
+
+</body>
+</html>
