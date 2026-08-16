@@ -68,12 +68,19 @@
         width: 100%;
         height: 60px;
     }
-    .player-box button {
-    border-radius: 8px;
-    padding: 3px 7px; /* ← 高さアップ */
-    font-size: 14px;   /* ← 入力欄とバランスを合わせる */
-    cursor: pointer;
+
+.player-box button {
+    background: #e6f0ff;        /* 淡い青（背景と馴染む） */
+    color: #333;                /* 黒文字で視認性UP */
+    border-radius: 8px;         /* 柔らかい角丸 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.12); /* 控えめな影 */
 }
+
+.player-box button:active {
+    transform: translateY(2px); /* 押した感 */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.18);
+}
+
 
 
     .add-btn {
@@ -363,7 +370,54 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
+/* ============================
+   ダークモード専用スタイル
+============================ */
 
+/* パネル全体 */
+body.dark-mode .panel {
+    background: #333;
+    color: #eee;
+    border-color: #555;
+}
+
+/* プレイヤー一覧の枠 */
+body.dark-mode #playerGrid .player-box {
+    background: #2e2e2e;
+    border: 1px solid #555;
+}
+
+/* メモの外枠 */
+body.dark-mode .memo-area {
+    background: #444;
+    border: 1px solid #666;
+}
+
+/* メモ内のテキストエリア */
+body.dark-mode .memo-area textarea {
+    background: #222;
+    color: #fff;
+    border: 1px solid #777;
+}
+
+/* 投票ウィンドウ */
+body.dark-mode .vote-self-window {
+    background: #222;
+    color: #fff;
+    border: 1px solid #666;
+}
+
+/* セレクトボックス */
+body.dark-mode select {
+    background: #333;
+    color: #fff;
+    border: 1px solid #666;
+}
+
+/* ❗ ボタンはダークモードでも色を変えない */
+button {
+    /* 既存の色をそのまま使う */
+}
 
 
 
@@ -396,6 +450,7 @@
    <div class="top-buttons">
 
 
+<button class="top-btn" onclick="location.href='settings.html'">設定</button>
 
 
 <button class="top-btn new-village-btn"
@@ -438,7 +493,7 @@
     <!-- 占い師 -->
 <div class="panel" draggable="true">
     <div class="panel-header" onclick="togglePanel(this)">
-        <span class="handle">≡</span>占い師結果
+        <span class="handle">≡</span>占い師結果　🔮
     </div>
 
     <div class="panel-content">
@@ -453,7 +508,7 @@
     <!-- 霊能者 -->
 <div class="panel" draggable="true">
     <div class="panel-header" onclick="togglePanel(this)">
-        <span class="handle">≡</span>霊能結果
+        <span class="handle">≡</span>霊能結果　👻
     </div>
 
     <div class="panel-content">
@@ -468,7 +523,7 @@
     <!-- 騎士 -->
 <div class="panel" draggable="true">
     <div class="panel-header" onclick="togglePanel(this)">
-        <span class="handle">≡</span>騎士結果
+        <span class="handle">≡</span>騎士結果　⚔
     </div>
 
     <div class="panel-content">
@@ -483,7 +538,7 @@
     <!-- 処刑者 -->
 <div class="panel" draggable="true">
     <div class="panel-header" onclick="togglePanel(this)">
-        <span class="handle">≡</span>処刑者
+        <span class="handle">≡</span>処刑者　👤
     </div>
 
     <div class="panel-content" style="display:none;">
@@ -496,7 +551,7 @@
     <!-- 襲撃者 -->
 <div class="panel" draggable="true">
     <div class="panel-header" onclick="togglePanel(this)">
-        <span class="handle">≡</span>襲撃者
+        <span class="handle">≡</span>襲撃者　💥
     </div>
 
     <div class="panel-content" style="display:none;">
@@ -1204,6 +1259,38 @@ function goToTitle() {
     location.href = "start.html";
 }
 
+/* 設定読み込み */
+function applySettings() {
+
+    /* テーマ取得 */
+    let theme = localStorage.getItem("theme");
+
+    /* ▼ 初回はライトモードをデフォルトにする */
+    if (!theme) {
+        theme = "light";
+        localStorage.setItem("theme", "light");
+    }
+
+    /* ▼ テーマ反映 */
+    if (theme === "dark") {
+        document.body.classList.add("dark-mode");
+        document.body.style.background = "#222";
+        document.body.style.color = "#eee";
+    } else {
+        document.body.classList.remove("dark-mode");
+        document.body.style.background = "#f5f5f5";
+        document.body.style.color = "#000";
+    }
+}
+
+
+
+//設定
+window.onload = () => {
+    loadState();       // ← 既存の復元処理
+    initVoteSelf();    // ← 既存の投票処理
+    applySettings();   // ← 設定反映（これが最重要）
+};
 
 
 </script>
