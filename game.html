@@ -428,18 +428,21 @@ button {
 //スマホ対応
 @media (max-width: 600px) {
 
-    /* ▼ プレイヤー一覧をスマホでは1列にする */
+    /* ▼ プレイヤー一覧を横スクロール可能にする */
     .player-grid {
-        grid-template-columns: 1fr;
+        display: flex;
+        overflow-x: auto;
         gap: 10px;
+        padding-bottom: 10px;
     }
 
+    /* ▼ プレイヤー1人分のボックスを固定幅にする（横並びにするため） */
     .player-box {
-        width: 100%;
-        box-sizing: border-box;
+        min-width: 220px; /* ← PC版と同じ幅でOK */
+        flex-shrink: 0;   /* ← スマホで縮まないようにする */
     }
 
-    /* ▼ パネルの左右余白を少し縮める（ズーム防止） */
+    /* ▼ パネルの左右余白を縮める（ズーム防止） */
     .panel {
         margin: 10px;
     }
@@ -455,21 +458,7 @@ button {
         font-size: 16px;
         padding: 10px;
     }
-
-    /* ▼ ボタン全般を押しやすく */
-    button {
-        font-size: 18px;
-        padding: 12px 18px;
-    }
-
-    /* ▼ プレイヤー名入力欄を押しやすく */
-    .player-name-input,
-    .player-input {
-        height: 44px;
-        font-size: 18px;
-    }
 }
-
 
 
 
