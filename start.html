@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>人狼ノート - スタート</title>
+
 
 <style>
   :root{
@@ -148,9 +148,21 @@
     .btn{ min-width:150px; padding:12px 18px; font-size:16px; }
     .falling{ font-size:34px; }
   }
+
+
+.btn:active {
+  transform: scale(0.96);
+  opacity: 0.85;
+}
+
+
+
 </style>
 </head>
 <body>
+
+<audio id="bgm" src="bgm.mp3" loop></audio>
+
 
 <div class="start-screen" id="start-screen">
   <div class="bg-blob"></div>
@@ -182,7 +194,6 @@
   const fallingWrap = document.getElementById('falling-wrap');
   const startScreen = document.getElementById('start-screen');
 
-  const clickAudio = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=");
 
   try {
     const hasState = !!localStorage.getItem("jinroState");
@@ -190,8 +201,7 @@
   } catch (e) {}
 
   startBtn.addEventListener('click', () => {
-    clickAudio.currentTime = 0;
-    clickAudio.play().catch(()=>{});
+
 
     startScreen.style.transition = "opacity .42s ease, transform .42s ease";
     startScreen.style.opacity = "0";
