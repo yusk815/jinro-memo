@@ -427,34 +427,33 @@ button {
 
 //スマホ対応
 @media (max-width: 600px) {
+
+    /* ▼ プレイヤー一覧をスマホ幅に合わせて縮める */
     .player-grid {
-        grid-template-columns: 1fr; /* ← 1列にする */
+        grid-template-columns: 1fr 1fr; /* ← スマホでも2列維持 */
+        gap: 8px;
     }
 
     .player-box {
-        width: 100%; /* ← 横幅いっぱいに広げる */
+        width: 100%; /* ← 固定幅200pxをやめる */
+        box-sizing: border-box;
     }
+
+    /* ▼ パネルの左右余白を縮める（ズーム防止） */
+    .panel {
+        margin: 8px;
+    }
+
+    /* ▼ 上のボタンをスマホ幅に合わせる */
     .top-buttons {
-        flex-wrap: wrap;   /* ← 折り返しOKにする */
+        flex-wrap: wrap;
         gap: 6px;
     }
 
     .top-btn {
-        width: 100%;       /* ← 画面幅に合わせる */
+        width: 100%;
         font-size: 16px;
         padding: 10px;
-    }
-
-    .panel {
-        margin: 12px;
-    }
-    button {
-        font-size: 18px;
-        padding: 12px 18px;
-    }
-    .player-name-input {
-        height: 44px;
-        font-size: 18px;
     }
 }
 
