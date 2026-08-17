@@ -368,7 +368,7 @@
     background: #27ae60;
 }
 
-//タイトルへ戻る
+/* タイトルへ戻る */
 .top-btn {
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
@@ -423,54 +423,22 @@ button {
     /* 既存の色をそのまま使う */
 }
 
-
-
-//スマホ対応
+/* スマホ対応 */
 @media (max-width: 600px) {
 
-    /* ▼ プレイヤー一覧をスマホでも2列にする */
     .player-grid {
-        grid-template-columns: 160px 160px; /* ← 200px → 160px に縮める */
-        gap: 8px;
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        padding-bottom: 10px;
     }
 
-    /* ▼ プレイヤー1人分のボックスを縮める */
     .player-box {
-        width: 160px;        /* ← 200px → 160px */
-        padding: 8px;
-        box-sizing: border-box;
-    }
-
-    /* ▼ プレイヤー名入力欄も縮める */
-    .player-box input {
-        width: 140px;        /* ← 120px → 140px（横幅に合わせて調整） */
-        font-size: 16px;
-        height: 36px;
-    }
-
-    /* ▼ ＋メモボタンも縮める */
-    .player-box button {
-        padding: 4px 8px;
-        font-size: 14px;
-    }
-
-    /* ▼ パネルの左右余白を縮める（ズーム防止） */
-    .panel {
-        margin: 10px;
-    }
-
-    /* ▼ 上のボタンをスマホ幅に合わせる */
-    .top-buttons {
-        flex-wrap: wrap;
-        gap: 6px;
-    }
-
-    .top-btn {
-        width: 100%;
-        font-size: 16px;
-        padding: 10px;
+        min-width: 200px;
+        flex-shrink: 0;
     }
 }
+
 
 
 
