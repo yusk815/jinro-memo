@@ -591,6 +591,28 @@ body.dark-mode #settingPopup .close-btn:hover {
 }
 
 
+/* PC版：常に2列、横スクロールなし */
+body.is-desktop .player-grid {
+    display: grid;
+    grid-template-columns: 220px 220px;
+    gap: 5px 10px;
+    overflow-x: hidden;
+}
+
+/* スマホ版：横スクロール */
+body.is-mobile .player-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 10px;
+}
+
+body.is-mobile .player-box {
+    min-width: 200px;
+    flex-shrink: 0;
+}
+
+
 
 /* スマホ対応 */
 @media (max-width: 600px) {
@@ -1492,6 +1514,11 @@ window.addEventListener("load", applySettings);
 window.addEventListener("load", loadState);
 window.addEventListener("load", initVoteSelf);
 
+
+document.addEventListener('DOMContentLoaded', () => {
+  const isMobile = /iPhone|Android.+Mobile/.test(navigator.userAgent);
+  document.body.classList.add(isMobile ? 'is-mobile' : 'is-desktop');
+});
 
 
 </script>
