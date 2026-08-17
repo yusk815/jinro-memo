@@ -373,6 +373,26 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
+/* ▼ ライトモードのパネル背景を薄いグレーにして視認性UP */
+body.light-mode .panel {
+    background: #f7f9fc; /* ← 白より少し濃い、柔らかいグレー */
+    border: 1px solid #e0e6ef; /* ← 枠線を薄く追加して視認性UP */
+}
+
+/* ▼ プレイヤー枠も少し色を付ける */
+body.light-mode .player-box {
+    background: #ffffff;
+    border: 1px solid #d8e0eb;
+}
+
+/* ▼ 占い結果・霊能結果・騎士結果の枠も同様に */
+body.light-mode .role-row {
+    background: #ffffff;
+    border: 1px solid #d8e0eb;
+    border-radius: 8px;
+    padding: 8px;
+}
+
 
 /* ============================
    ダークモード専用スタイル
@@ -386,9 +406,9 @@ body.dark-mode .panel {
 }
 
 /* プレイヤー一覧の枠 */
-body.dark-mode #playerGrid .player-box {
-    background: #2e2e2e;
-    border: 1px solid #555;
+body.dark-mode .player-grid .player-box {
+    background: #333 !important;
+    border: 1px solid #555 !important;
 }
 
 /* メモの外枠 */
@@ -423,6 +443,145 @@ button {
     /* 既存の色をそのまま使う */
 }
 
+/* ============================
+   ダークモード彩度UP（青系）
+============================ */
+
+/* パネル全体 */
+body.dark-mode .panel {
+    background: #555555 !important; /* 青みのある暗色 */
+    border: 1px solid #3a4a5a !important;
+}
+
+/* プレイヤー一覧の枠 */
+body.dark-mode .player-grid .player-box {
+    background: #666666 !important;
+    border: 1px solid #3a4a5a !important;
+}
+
+/* 占い結果・霊能結果などの枠 */
+body.dark-mode .role-row {
+    background: #666666 !important;
+    border: 1px solid #3a4a5a !important;
+    border-radius: 8px !important;
+    padding: 8px !important;
+}
+
+/* メモ欄 */
+body.dark-mode .memo-area {
+    background: #666666 !important;
+    border: 1px solid #3a4a5a !important;
+}
+
+body.dark-mode .memo-area textarea {
+    background: #707070 !important;
+    color: #fff !important;
+    border: 1px solid #3a4a5a !important;
+}
+
+/* 投票ウィンドウ */
+body.dark-mode .vote-self-window {
+    background: #666666 !important;
+    border: 1px solid #3a4a5a !important;
+}
+
+
+/* ▼ ダークモードでもプルダウンの文字を黒にする */
+body.dark-mode select,
+body.dark-mode option {
+    color: #000 !important;   /* ← 黒文字に変更 */
+    background: #ddd !important; /* ← 見やすい薄グレー背景 */
+}
+
+/* ▼ 白結果（白背景＋黒文字） */
+.result-white {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1px solid #ccc !important;
+}
+
+/* ▼ ダークモード時の黒結果（黒背景＋白文字） */
+body.dark-mode .result-black {
+    background: #000 !important;
+    color: #fff !important;
+    border: 1px solid #666 !important;
+}
+
+
+
+/* ポップアップの共通レイヤー */
+#settingPopup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    z-index: 9999;
+}
+
+/* ライトモードのポップアップ */
+body.light-mode #settingPopup .popup-content {
+    background: #fff;
+    color: #000;
+}
+
+/* ダークモードのポップアップ */
+body.dark-mode #settingPopup .popup-content {
+    background: #222;
+    color: #fff;
+}
+
+#settingPopup .popup-content {
+    padding: 20px;
+    border-radius: 12px;
+    width: 300px;
+    margin: 100px auto;
+    text-align: center;
+}
+
+/* ラジオボタンと文字を中央揃えにする */
+#settingPopup label {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* ボタンと文字の間隔 */
+    margin: 6px 0;
+}
+
+
+/* 閉じるボタン共通 */
+#settingPopup .close-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    margin-top: 15px;
+}
+
+/* ライトモードの閉じるボタン */
+body.light-mode #settingPopup .close-btn {
+    background: #cfe3ff; /* 淡い青 */
+    color: #000;
+}
+body.light-mode #settingPopup .close-btn:hover {
+    background: #b5d4ff; /* 少し濃く */
+}
+
+/* ダークモードの閉じるボタン */
+body.dark-mode #settingPopup .close-btn {
+    background: #555;
+    color: #fff;
+}
+body.dark-mode #settingPopup .close-btn:hover {
+    background: #666;
+}
+
+
+
+
 /* スマホ対応 */
 @media (max-width: 600px) {
 
@@ -453,8 +612,21 @@ button {
 
    <div class="top-buttons">
 
-
 <button class="top-btn" onclick="goToSetting()">設定</button>
+
+
+<div id="settingPopup" style="display:none;">
+    <div class="popup-content">
+        <h3>明るさを変更できます</h3>
+        <label><input type="radio" name="theme" value="light"> ライトモード</label><br>
+        <label><input type="radio" name="theme" value="dark"> ダークモード</label>
+
+　　　　<button class="close-btn" onclick="closeSetting()">閉じる</button>
+       
+    </div>
+</div>
+
+
 
 
 <button class="top-btn new-village-btn"
@@ -1263,25 +1435,47 @@ function goToTitle() {
     location.href = "start.html";
 }
 
-
-//設定ボタン
+//設定
 function goToSetting() {
-    location.href = "settings.html";
+    document.getElementById("settingPopup").style.display = "block";
 }
+
 
 function applySettings() {
     const theme = localStorage.getItem("theme") || "light";
 
     if (theme === "dark") {
+        document.body.classList.remove("light-mode");
         document.body.classList.add("dark-mode");
         document.body.style.background = "#222";
         document.body.style.color = "#eee";
     } else {
         document.body.classList.remove("dark-mode");
+        document.body.classList.add("light-mode"); 
         document.body.style.background = "#eef6ff";
         document.body.style.color = "#000";
     }
 }
+
+//① 設定ポップアップを開く
+function openSetting() {
+    document.getElementById("settingPopup").style.display = "block";
+}
+
+//② 閉じる
+function closeSetting() {
+    document.getElementById("settingPopup").style.display = "none";
+}
+
+
+//③ テーマ変更イベント（settings.html のコードを移植）
+document.querySelectorAll('input[name="theme"]').forEach(radio => {
+    radio.addEventListener("change", () => {
+        localStorage.setItem("theme", radio.value);
+        applySettings();
+    });
+});
+
 
 // ✅ これは残す
 window.addEventListener("load", applySettings);
