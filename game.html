@@ -428,20 +428,20 @@ button {
 //スマホ対応
 @media (max-width: 600px) {
 
-    /* ▼ プレイヤー一覧をスマホ幅に合わせて縮める */
+    /* ▼ プレイヤー一覧をスマホでは1列にする */
     .player-grid {
-        grid-template-columns: 1fr 1fr; /* ← スマホでも2列維持 */
-        gap: 8px;
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
 
     .player-box {
-        width: 100%; /* ← 固定幅200pxをやめる */
+        width: 100%;
         box-sizing: border-box;
     }
 
-    /* ▼ パネルの左右余白を縮める（ズーム防止） */
+    /* ▼ パネルの左右余白を少し縮める（ズーム防止） */
     .panel {
-        margin: 8px;
+        margin: 10px;
     }
 
     /* ▼ 上のボタンをスマホ幅に合わせる */
@@ -455,7 +455,21 @@ button {
         font-size: 16px;
         padding: 10px;
     }
+
+    /* ▼ ボタン全般を押しやすく */
+    button {
+        font-size: 18px;
+        padding: 12px 18px;
+    }
+
+    /* ▼ プレイヤー名入力欄を押しやすく */
+    .player-name-input,
+    .player-input {
+        height: 44px;
+        font-size: 18px;
+    }
 }
+
 
 
 
