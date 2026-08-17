@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
 <meta charset="UTF-8">
 <title>人狼メモアプリ - ゲーム画面</title>
 <style>
@@ -424,6 +427,24 @@ button {
 
 //スマホ対応
 @media (max-width: 600px) {
+    .player-grid {
+        grid-template-columns: 1fr; /* ← 1列にする */
+    }
+
+    .player-box {
+        width: 100%; /* ← 横幅いっぱいに広げる */
+    }
+    .top-buttons {
+        flex-wrap: wrap;   /* ← 折り返しOKにする */
+        gap: 6px;
+    }
+
+    .top-btn {
+        width: 100%;       /* ← 画面幅に合わせる */
+        font-size: 16px;
+        padding: 10px;
+    }
+
     .panel {
         margin: 12px;
     }
