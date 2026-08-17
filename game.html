@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-
 <meta charset="UTF-8">
 <title>人狼メモアプリ - ゲーム画面</title>
 <style>
@@ -374,6 +370,7 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
+
 /* ============================
    ダークモード専用スタイル
 ============================ */
@@ -438,17 +435,6 @@ button {
         height: 44px;
         font-size: 18px;
     }
-
-    body {
-        transform: scale(0.30);
-        transform-origin: top center;
-
-    }
- }
-
-html, body {
-    max-width: 100%;
-    overflow-x: hidden;
 }
 
 
@@ -465,7 +451,7 @@ html, body {
    <div class="top-buttons">
 
 
-<button class="top-btn" onclick="location.href='settings.html'">設定</button>
+<button class="top-btn" onclick="goToSetting()">設定</button>
 
 
 <button class="top-btn new-village-btn"
@@ -741,7 +727,7 @@ function updatePlayers() {
     const inputs = document.querySelectorAll(".player-box input");
     players = [];
     inputs.forEach((input, index) => {
-        players.push(input.value || `プレイヤー${index + 1}`);
+        players.push(input.value);
     });
     refreshAllSelects();
 }
@@ -1274,38 +1260,31 @@ function goToTitle() {
     location.href = "start.html";
 }
 
-/* 設定読み込み */
+
+//設定ボタン
+function goToSetting() {
+    location.href = "settings.html";
+}
+
 function applySettings() {
+    const theme = localStorage.getItem("theme") || "light";
 
-    /* テーマ取得 */
-    let theme = localStorage.getItem("theme");
-
-    /* ▼ 初回はライトモードをデフォルトにする */
-    if (!theme) {
-        theme = "light";
-        localStorage.setItem("theme", "light");
-    }
-
-    /* ▼ テーマ反映 */
     if (theme === "dark") {
         document.body.classList.add("dark-mode");
         document.body.style.background = "#222";
         document.body.style.color = "#eee";
     } else {
         document.body.classList.remove("dark-mode");
-        document.body.style.background = "#f5f5f5";
+        document.body.style.background = "#eef6ff";
         document.body.style.color = "#000";
     }
 }
 
+// ✅ これは残す
+window.addEventListener("load", applySettings);
+window.addEventListener("load", loadState);
+window.addEventListener("load", initVoteSelf);
 
-
-//設定
-window.onload = () => {
-    loadState();       // ← 既存の復元処理
-    initVoteSelf();    // ← 既存の投票処理
-    applySettings();   // ← 設定反映（これが最重要）
-};
 
 
 </script>
