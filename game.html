@@ -438,6 +438,34 @@ button {
         height: 44px;
         font-size: 18px;
     }
+
+    /* ▼ 追加：プレイヤー入力欄が見切れないようにする */
+    .player-box {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .player-input {
+        width: 100%;
+        font-size: 18px;
+        box-sizing: border-box;
+    }
+
+    .memo-area {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* 番号・入力欄・＋メモを横並びで綺麗に収める */
+    .player-box > div {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .player-box .player-input {
+        flex: 1;
+    }
 }
 
 
